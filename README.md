@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/gignorie/HyperOS-Old-Control-Center/main/icon.png" width="128" height="128" alt="HyperOS CC Logo">
+</p>
+
 # HyperOS Old Control Center
 
 [English](#english) | [Русский](#русский)
