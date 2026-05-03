@@ -11,29 +11,29 @@ jobs:
       contents: write
     
     steps:
-      - name: Checkout repository
+      - name: Checkout update branch
         uses: actions/checkout@v4
         with:
+          ref: update # Явно переключаемся на ветку, где лежат конфиги апдейта
           fetch-depth: 0
 
       - name: Extract release body
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Вытаскиваем описание текущего релиза
+          # Вытаскиваем описание последнего релиза, созданного в main
           gh release view ${{ github.event.release.tag_name }} --json body --template '{{.body}}' > changelog.md
 
-      - name: Commit and push changes
+      - name: Commit and push changes to update branch
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Проверяем, изменилось ли что-то, чтобы не спамить пустыми коммитами
           if git diff --quiet changelog.md; then
-            echo "No changes in changelog."
+            echo "Никаких изменений в тексте релиза нет."
           else
             git add changelog.md
-            git commit -m "auto: update changelog for release ${{ github.event.release.tag_name }}"
-            git push
+            git commit -m "auto: update changelog from release ${{ github.event.release.tag_name }}"
+            git push origin update
           fi
           
