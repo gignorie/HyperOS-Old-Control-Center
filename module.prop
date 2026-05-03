@@ -1,6 +1,0 @@
-id=old_cc_fix
-name=[HyperOS3+ fix]Old Control Center
-version=v1.1
-versionCode=11
-author=gignorie
-description=English: Forced restore of the old Control Center style via static overlay. Русский: Принудительный возврат старого стиль центра управления через статический оверлей.
