@@ -1,0 +1,39 @@
+name: Update Changelog on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-log:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout update branch
+        uses: actions/checkout@v4
+        with:
+          ref: update # Явно переключаемся на ветку, где лежат конфиги апдейта
+          fetch-depth: 0
+
+      - name: Extract release body
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Вытаскиваем описание последнего релиза, созданного в main
+          gh release view ${{ github.event.release.tag_name }} --json body --template '{{.body}}' > changelog.md
+
+      - name: Commit and push changes to update branch
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          if git diff --quiet changelog.md; then
+            echo "Никаких изменений в тексте релиза нет."
+          else
+            git add changelog.md
+            git commit -m "auto: update changelog from release ${{ github.event.release.tag_name }}"
+            git push origin update
+          fi
+          
